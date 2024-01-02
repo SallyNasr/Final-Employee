@@ -1,15 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {EmployeeService} from "../../services/employee/employee.service";
-import {FormBuilder, FormControl, FormControlName, FormGroup, Validators} from "@angular/forms";
-
-export interface Employee {
-  id: number;
-  name: string;
-  phoneNumber: string;
-  email:string;
-  department:number;
-}
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {DepartmentService} from "../../services/department/department.service";
+import {DepartmentModel} from "../../Models/department.model";
+import {EmployeeModel} from "../../Models/employee.model";
 
 @Component({
   selector: 'app-employees',
@@ -17,128 +12,176 @@ export interface Employee {
   styleUrls: ['./employees.component.css']
 })
 export class EmployeesComponent implements OnInit {
-  employees: any[] = [];
-  isModalVisible =false;
-  isDeleteModalVisible=false;
-  isEditModalVisible=false;
-  editedEmployee: any = {};
 
-  editEmployeeForm:FormGroup;
-  // selectedName:FormControl;
-  // selectedEmail:FormControl;
-  // selectedAddress:FormControl;
-  // selectedDepartmentId:FormControl;
-
-
-  constructor(private httpClient: HttpClient,private employeeService: EmployeeService, private fb: FormBuilder) {
-    // this.selectedName=new FormControl();
-    // this.selectedEmail=new FormControl();
-    // this.selectedAddress=new FormControl();
-    // this.selectedDepartmentId=new FormControl();
-    this.editEmployeeForm=this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', Validators.required],
-      department: ['', Validators.required],
+  httpOptions={
+    headers:new HttpHeaders({
+      'Content-Type':'application/json',
     })
   }
+  employees: EmployeeModel[] = [];
+  isModalVisible = false;
+  isDeleteModalVisible = false;
+  isEditModalVisible = false;
+  editedEmployee: any = {};
+  deletedEmployee:any={};
+  editEmployeeForm: FormGroup;
+
+  addEmployeeForm:FormGroup;
+  selectedEmployee: EmployeeModel | any;
+   departments: DepartmentModel[]= [];
+
+  searchTerm: string = '';
+  selectedDepartment:DepartmentModel[]=[];
+
+  filterEmployee:EmployeeModel[]=[];
+
+  constructor(private httpClient: HttpClient, private employeeService: EmployeeService, private fb: FormBuilder,private departmentService: DepartmentService) {
+    this.editEmployeeForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      address: ['', Validators.required],
+      department: [null, Validators.required],
+    });
+
+    this.addEmployeeForm = this.fb.group({
+      name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      address: ['', Validators.required],
+      departmentId: [null, Validators.required],
+    });
+
+    }
 
   ngOnInit(): void {
+
     this.getAllEmployees();
+    this.getAllDepartments();
   }
 
-  // onSearch(query:string=''){
-  //   this.employees.setFilter([
-  //     {
-  //       field:'name',
-  //       search:query,
-  //     }
-  //   ],false
-  //   );
-  // }
-
-  getAllEmployees(): void {
+  getAllEmployees() {
     this.employeeService.getAllEmployees().subscribe(
-      (data: any[]) => {
+      data => {
         this.employees = data;
-        console.log('All employees:', this.employees);
-      },
-      (error) => {
-        console.error('Error fetching employees:', error);
-      }
-    );
+        this.filterEmployee=this.employees;
+      });
   }
 
-  // addFakeEmployee(): void {
-  //   const fakeEmployee = {
-  //     id: this.employees.length + 1,
-  //     name: 'Fake Employee',
-  //     phoneNumber: '123 Test St',
-  //     email: 'fake@example.com',
-  //     department: 3,
-  //   };
-  //
-  //   this.employeeService.addEmployee(fakeEmployee);
-  //   this.getAllEmployees(); // Refresh the employee list
-  // }
+  openEditModal(employee: EmployeeModel): void {
+    this.isEditModalVisible = true;
+
+    this.editEmployeeForm.patchValue({
+      name: employee.name,
+      email: employee.email,
+      address: employee.address,
+      department: employee.department?.name
+    });
+    this.editedEmployee = employee;
+  }
+
+  openDeleteModal(employee: EmployeeModel): void {
+    this.isDeleteModalVisible = true;
+
+     this.deletedEmployee = employee;
+  }
 
   closeEditModal() {
     this.isEditModalVisible = false;
   }
-  closeDeleteModal(){
+
+  closeDeleteModal() {
     this.isDeleteModalVisible = false;
   }
+
   closeModal() {
     this.isModalVisible = false;
   }
 
   addEmployee() {
-    if (this.editEmployeeForm.valid) {
-      console.log("addEmployee")
-      const newEmployee = this.editEmployeeForm.value;
+    console.log("addEmployee", this.addEmployeeForm.value);
+    const newEmployee:EmployeeModel= {
+      name: this.addEmployeeForm.get('name')?.value,
+      email: this.addEmployeeForm.get('email')?.value,
+      address: this.addEmployeeForm.get('address')?.value,
+      departmentId: this.addEmployeeForm.get('departmentId')?.value,
+      department: {
+        // id: this.addEmployeeForm.get('department')?.value,
+        name: this .addEmployeeForm.get('name')?.value,
+      },
+    };
 
       this.employeeService.addEmployee(newEmployee).subscribe(
-        (response) => {console.log(response);
-          console.log('Employee added successfully:', response);
-          // Refresh employee data after adding
+        (response) => {
+          console.log('Employee added successfully:',response);
           this.getAllEmployees();
           this.isModalVisible = false;
         },
         (error) => {
           console.error('Error adding employee:', error);
+          console.error('Full error response:', error.error); // Log the full error response
         }
       );
     }
+
+  onDepartmentChange(event: any) {
+    this.addEmployeeForm.patchValue({
+      departmentId: event.target.value,
+    });
   }
 
-  updateEmployee() {console.log("hiii");
-    if (this.editEmployeeForm.valid) {
+
+  updateEmployee(): void {
       const updatedEmployee = this.editEmployeeForm.value;
       const employeeId = this.editedEmployee.id;
+      this.employeeService.updateEmployee(employeeId, updatedEmployee).subscribe();
+        this.getAllEmployees();
+        this.isEditModalVisible = false;
+         // window.location.reload();
+    console.log(updatedEmployee);
+  }
 
-      this.employeeService.updateEmployee(employeeId, updatedEmployee).subscribe(
-        (response) => {
-          console.log('Employee updated successfully:', response);
+  deleteEmployee():void {
+    const employeeId = this.deletedEmployee.id;
+      this.employeeService.deleteEmployee(employeeId).subscribe( data => {
+        console.log(data);
+        this.getAllEmployees();
+        this.closeDeleteModal()
+      });
+    }
 
-          this.getAllEmployees();// Refresh employee data after update
-          this.isEditModalVisible = false;
-        },
-        (error) => {
-          console.error('Error updating employee:', error);
-        }
+
+  applySearchFilter(): void {
+      this.filterEmployee = this.employees.filter((employee) =>
+        employee.name.toLowerCase().includes(this.searchTerm.toLowerCase())
       );
     }
+
+   filteredEmployees(): EmployeeModel[] {
+    if (this.searchTerm.trim() === '') {
+      return this.employees;
+    }
+    const lowerCaseQuery = this.searchTerm.toLowerCase();
+    return this.employees.filter(employee =>
+      employee.name.toLowerCase().includes(lowerCaseQuery)
+    );
   }
 
-  deleteEmployee(employee:Employee) :void{
-    this.employeeService.deleteEmployee(employee.id).subscribe();
-    this.isDeleteModalVisible=false;
-  }
 
-
-  // onSearch(): void {
-  //   this.filteredEmployee = this.employees.filter((Employee) =>
-  //     Employee.toLowerCase().includes(this.filterText.toLowerCase())
-  //   );
+  // getAllDepartments(): void {
+  //   this.departmentService.getAllDepartments().subscribe((departments) => {
+  //     this.departments = departments;
+  //   });
   // }
+  getAllDepartments(): void {
+    console.log('Calling getAllDepartments');
+    this.departmentService.getAllDepartments().subscribe(
+      (departments) => {
+        console.log('Departments received:', departments);
+        this.departments = departments;
+      },
+      (error) => {
+        console.error('Error fetching departments:', error);
+      }
+    );
+  }
+
 }

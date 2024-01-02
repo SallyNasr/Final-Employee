@@ -10,9 +10,14 @@ import { EmployeesComponent } from './components/employees/employees.component';
 import { LeavesComponent } from './components/leaves/leaves.component';
 import { ExpensesComponent } from './components/expenses/expenses.component';
 import { HttpClientModule } from '@angular/common/http';
-import { AddEmployeeModalComponent } from './components/add-employee-modal/add-employee-modal.component';
 import { CustomActionsComponent } from './components/custom-actions/custom-actions.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { AddLeaveModalComponent } from './components/leaves/add-leave-modal/add-leave-modal.component';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import {LeavesService} from "./services/leaves/leaves.service";
+import {EmployeeService} from "./services/employee/employee.service";
+import { NgxPaginationModule } from 'ngx-pagination';
+import { ExpenseClaimEntriesComponent } from './components/expense-claim-entries/expense-claim-entries.component';
 
 @NgModule({
   declarations: [
@@ -21,8 +26,10 @@ import { NgSelectModule } from '@ng-select/ng-select';
     EmployeesComponent,
     LeavesComponent,
     ExpensesComponent,
-    AddEmployeeModalComponent,
     CustomActionsComponent,
+    AddLeaveModalComponent,
+    ExpenseClaimEntriesComponent,
+
 
   ],
   imports: [
@@ -31,11 +38,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgSelectModule
-
+    NgSelectModule,
+    NgxDatatableModule,
+    NgxPaginationModule
 
   ],
-  providers: [SidebarService,
+  providers: [SidebarService,LeavesService, EmployeeService
   ],
   bootstrap: [AppComponent]
 })

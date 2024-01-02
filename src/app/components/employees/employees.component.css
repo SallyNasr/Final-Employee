@@ -49,12 +49,15 @@ body {
   cursor: pointer;
 }
 
-.modal-footer .btn-primary {
-  background-color: #007bff;
+button.btn-primary{
+  background: #007bff;
   color: white;
   transition: background-color 0.3s;
   margin-right: 10px;
+  border-color: #007bff;
+  border-radius: 5px;
 }
+
 
 .modal-footer .btn-secondary {
   background-color: #6c757d;
@@ -144,4 +147,15 @@ body {
   display: flex;
   justify-content: flex-end;
   padding: 15px;
+}
+
+table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+table tr:nth-child(odd) {
+  background-color: transparent;
+}
+table tr>th {
+  background-color: transparent;
 }

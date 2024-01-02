@@ -1,16 +1,8 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Observable, of, pipe} from "rxjs";
-import { catchError, map, tap } from 'rxjs/operators';
-import {Employee} from "../../components/employees/employees.component";
-
-// interface Employee {
-//   id: number;
-//   name: string;
-//   phoneNumber: string;
-//   email:string;
-//   department:number;
-// }
+import {Observable, of} from "rxjs";
+import { catchError, tap } from 'rxjs/operators';
+import { EmployeeModel} from "../../Models/employee.model";
 
 @Injectable({
   providedIn: 'root',
@@ -18,9 +10,9 @@ import {Employee} from "../../components/employees/employees.component";
 
 
 export class EmployeeService {
-  employees: Employee[] = [];
+  employees: EmployeeModel[] = [];
 
-  private apiUrl = 'https://8080/api/employees';
+  private apiUrl = 'http://localhost:9090/api/employees';
 
   constructor(private http: HttpClient) {}
 
@@ -28,43 +20,33 @@ export class EmployeeService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  getAllEmployees(): Observable<Employee[]> {
-// return this.httpClient.get<any[]>(this.apiUrl);
-
-    const fakeData: Employee[] = [
-      { id: 1, name: 'John Doe', phoneNumber: '961258964', email: 'john@example.com', department: 1 },
-      { id: 2, name: 'Jane Doe', phoneNumber: '961255562', email: 'jane@example.com', department: 2 },
-
-    ];
-     return of(fakeData);
+  getAllEmployees(): Observable<EmployeeModel[]> {
+    return this.http.get<EmployeeModel[]>(`${this.apiUrl}/all`);
    }
 
-  addEmployee(employeeData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/add`, employeeData);
+  addEmployee(employeeData: EmployeeModel): Observable<object> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    return this.http.post(`${this.apiUrl}/add`, employeeData, { headers });
+
+  }
+  updateEmployee(id: number,employeeData:EmployeeModel[]): Observable<object> {
+    return this.http.patch(`${this.apiUrl}/update/${id}`, employeeData);
   }
 
-  updateEmployee(id: number, employeeData: Employee): Observable<string> {
-    //get the data of the selected row to be updated and add them int the inputs
-    return this.http.patch<string>(`${this.apiUrl}/update/${id}`, employeeData);
-  }
-
-  deleteEmployee(id: number): Observable<Employee> {
+  deleteEmployee(id: number): Observable<object> {
     const deleteUrl=`${this.apiUrl}/delete/${id}`
-    return this.http.delete<Employee>(deleteUrl, this.httpOptions).pipe(
-      tap(_ => this.log(`deleted employee of id=${id}`)),
-      catchError(this.handleError<Employee>('delete Employee'))
-    );
+    return this.http.delete(deleteUrl)
   }
 
   searchEmployee(term: string): Observable<any[]> {
     if (!term.trim()) {
       return of([]);
     }
-    return this.http.get<Employee[]>(`${this.apiUrl}/?name=${term}`).pipe(
+    return this.http.get<EmployeeModel[]>(`${this.apiUrl}/?name=${term}`).pipe(
       tap(x => x.length ?
-        this.log(`found heroes matching "${term}"`) :
-        this.log(`no heroes matching "${term}"`)),
-      catchError(this.handleError<Employee[]>('searchHeroes', []))
+        this.log(`found employees matching "${term}"`) :
+        this.log(`no employees matching "${term}"`)),
+      catchError(this.handleError<EmployeeModel[]>('searchEmployee', []))
     );
   }
 
