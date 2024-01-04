@@ -1,13 +1,14 @@
-<div>
+<div class="expense-claims">
   <h2>Expense Claims</h2>
   <ngx-datatable
-    class="material"
+    class="material striped"
     [rows]="expenses"
     [columnMode]="'force'"
     [headerHeight]="50"
     [footerHeight]="50"
-    [rowHeight]="'auto'"
+    [rowHeight]="50"
     [sorts]="[{ prop: 'employeeId', dir: 'asc' }]"
+    [limit]="10"
   >
     <ngx-datatable-column name="ID" prop="id"></ngx-datatable-column>
     <ngx-datatable-column name="Date" prop="date"></ngx-datatable-column>
@@ -17,10 +18,10 @@
     <ngx-datatable-column name="Employee ID" prop="employeeId"></ngx-datatable-column>
 
     <!-- Action Column -->
-  <ngx-datatable-column name="Details">
-    <ng-template let-row="row" ngx-datatable-cell-template >
-      <button (click)="openExpenseClaimEntries(row.employeeId)">View Entries</button>
-    </ng-template>
-  </ngx-datatable-column>
+    <ngx-datatable-column name="Details">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <button class="view-entries-btn" (click)="openExpenseClaimEntries(row.employeeId)">View Entries</button>
+      </ng-template>
+    </ngx-datatable-column>
   </ngx-datatable>
 </div>

@@ -1,0 +1,35 @@
+.expense-claims {
+  margin: 20px;
+}
+
+h2 {
+  color: #07294d; /* Header color */
+}
+
+.material {
+  background-color: #fcf7f7;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ngx-datatable-header {
+  background-color: #007bff; /* Header background color */
+  color: #fff; /* Header text color */
+}
+
+.ngx-datatable-material .datatable-row-odd {
+  background-color: red; /* Odd row background color */
+}
+
+.material .datatable-row-even {
+  background-color: #e9ecef; /* Even row background color */
+}
+
+.material .datatable-row:hover {
+  background-color: #cce5ff; /* Hovered row background color */
+}
+
+.ngx-datatable-column {
+  padding: 10px;
+}
+

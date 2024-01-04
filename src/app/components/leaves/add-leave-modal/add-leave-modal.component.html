@@ -1,0 +1,249 @@
+<div  style="padding-left: 50% ;margin-top: 20px" >
+  <button type="button" class="btn btn-primary" style="align-content: flex-end" (click)="isModalVisible = true">+ Add Leave</button>
+</div>
+
+
+<div class="container mt-5" style="margin-top: 30px">
+  <ngx-datatable [rows]="leaves" *ngIf="leaves" [columnMode]="'force'"  class="bootstrap"
+                 [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [limit]="6"
+                   [loadingIndicator]="loadingIndicator">
+
+    <ngx-datatable-column name="Id">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row.id }}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Leave Type">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row.typeOfLeaves.name }}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="From">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row.fromDate}}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="To">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row.toDate }}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Number of Days">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row.numberOfDays }}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Note">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row.note }}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Employee">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        {{ row.employeeName.name }}
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column name="Actions">
+      <ng-template let-row="row" ngx-datatable-cell-template>
+        <button class="btn" (click)="openEditModal(row)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+          </svg>
+        </button>
+        <button class="btn" (click)="openDeleteModal(row)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+          </svg>
+        </button>
+      </ng-template>
+    </ngx-datatable-column>
+  </ngx-datatable>
+<!--  <pagination-controls (pageChange)="onPageChange($event)" [maxSize]="5"></pagination-controls>-->
+
+</div>
+
+
+<!--ADD leave MODEL-->
+
+<div *ngIf="isModalVisible"   >
+  <div  class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header" style="display: flex">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">-&#45;&#45;Add New Leave:-&#45;&#45;</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()">x</button>
+
+        </div>
+
+        <div class="modal-body" >
+          <form [formGroup]="addLeaveForm">
+            <div class="mb-3">
+              <label for="leaveType">Leave Type</label>
+              <select formControlName="leaveType" id="leaveType" class="form-control" required>
+                <option *ngFor="let type of leaveTypes" [value]="type.id">
+                  {{ type.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="numberOfDays">Number of Leave Days</label>
+              <input type="number" [min]="1"  formControlName="numberOfDays"  id="numberOfDays" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="fromDate">From Date</label>
+              <input type="date" formControlName="fromDate" id="fromDate" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="toDate">To Date</label>
+              <input type="date" formControlName="toDate" id="toDate" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="note">Notes:</label>
+              <input type="text" formControlName="note" id="note" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="employeeId">Employee</label>
+              <select formControlName="employeeId" id="employeeId" class="form-control" required>
+                <option *ngFor="let employee of employees" [value]="employee.id">{{ employee.name }}</option>
+              </select>
+            </div>
+        </form>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="addLeave()">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--Delete Leave Model-->
+
+<div *ngIf="isDeleteModalVisible" >
+  <div class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeDeleteModal()">x</button>
+        </div><hr/>
+        <div class="modal-body"  >
+          <p>Are you sure you want to delete this leave? </p>
+        </div>
+        <div class="modal-footer d-flex justify-content-end" >
+          <button type="button" class="btn btn-danger mr-3" (click)="deleteLeave()">Yes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeDeleteModal()">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!--Edit leave MODEL-->
+
+<div *ngIf="isEditModalVisible" >
+<div  class="modal fade" id="editstaticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header" style="display: flex">
+        <h1 class="modal-title fs-5" id="editstaticBackdropLabel">-&#45;&#45;Edit Employee:-&#45;&#45;</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeEditModal()">x</button>
+      </div>
+
+      <div class="modal-body" >
+        <form [formGroup]="editLeaveForm">
+          <div class="mb-3">
+            <label for="editLeaveType">Leave Type</label><br>
+
+            <select formControlName="leaveType" name="editLeaveType" id="editLeaveType">
+              <option *ngFor="let leave of leaveTypes" [value]="leave.id" placeholder="LeaveType">
+                {{ leave.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="editNumberOfDays">Number of Leave Days</label>
+            <input type="number" [min]="1" formControlName="numberOfDays"  id="editNumberOfDays" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editFromDate">From Date</label>
+            <input type="date" formControlName="fromDate" id="editFromDate" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editToDate">To Date</label>
+            <input type="date" formControlName="toDate" id="editToDate" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editNote">Notes:</label>
+            <input type="text" formControlName="note" id="editNote" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="editEmployeeId">Employee</label><br>
+            <select formControlName="employeeId" name="editEmployeeId" id="editEmployeeId">
+              <option *ngFor="let employee of employees" [value]="employee.id" placeholder="Employee">
+                {{ employee.name }}
+              </option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="updateLeave()">Save</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+<!--<div class="container mt-3">-->
+<!--  <div class="row">-->
+<!--    <div class="col-md-6">-->
+<!--      <div class="input-group">-->
+<!--        &lt;!&ndash;        <label for="page" class="me-2">Page:</label>&ndash;&gt;-->
+<!--        <button class="btn btn-primary" (click)="decrementPage()">-->
+<!--          &lt;-->
+<!--        </button>-->
+<!--        <input-->
+<!--          type="number"-->
+<!--          class="form-control form-control-sm custom-page-input"-->
+<!--          id="page"-->
+<!--          [(ngModel)]="currentPage"-->
+<!--        />-->
+<!--        <button class="btn btn-primary" (click)="incrementPage()">-->
+<!--          &gt;-->
+<!--        </button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="col-md-2">-->
+<!--      <label for="size">Size:</label>-->
+<!--      <input type="number" class="form-control form-control-sm" id="size" [(ngModel)]="pageSize" />-->
+<!--    </div>-->
+<!--    <div class="col-md-4 d-flex align-items-end">-->
+<!--      <button class="btn btn-primary me-2" (click)="getLeaves()">-->
+<!--        Get Leaves-->
+<!--      </button>-->
+<!--      <button class="btn btn-primary" (click)="openLeaveMode()">Add Leave</button>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->

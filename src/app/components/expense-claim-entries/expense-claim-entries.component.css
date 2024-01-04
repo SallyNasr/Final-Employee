@@ -1,0 +1,14 @@
+.go-back-link {
+  cursor: pointer;
+  color: blue;
+  text-decoration: none;
+}
+
+.go-back-link:hover {
+  color: darkblue;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

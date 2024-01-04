@@ -13,6 +13,7 @@ export class ExpensesComponent implements OnInit {
   expenses: ExpenseClaimModel[] = [];
   expenseDetails: ExpenseDetailModel[]=[];
   DetailsPerEmp:TotalClaimsPerTypePerEmployeeModel[]=[];
+  loadingIndicator = true;
 
   constructor(private expenseService: ExpensesService, private router: Router) {
   }

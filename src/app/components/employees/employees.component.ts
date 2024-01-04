@@ -4,7 +4,7 @@ import {EmployeeService} from "../../services/employee/employee.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DepartmentService} from "../../services/department/department.service";
 import {DepartmentModel} from "../../Models/department.model";
-import {EmployeeModel} from "../../Models/employee.model";
+import { EmployeeModel} from "../../Models/employee.model";
 
 @Component({
   selector: 'app-employees',
@@ -28,7 +28,7 @@ export class EmployeesComponent implements OnInit {
 
   addEmployeeForm:FormGroup;
   selectedEmployee: EmployeeModel | any;
-   departments: DepartmentModel[]= [];
+  departments: DepartmentModel[]= [];
 
   searchTerm: string = '';
   selectedDepartment:DepartmentModel[]=[];
@@ -40,7 +40,7 @@ export class EmployeesComponent implements OnInit {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       address: ['', Validators.required],
-      department: [null, Validators.required],
+      departmentId: [null, Validators.required],
     });
 
     this.addEmployeeForm = this.fb.group({
@@ -48,12 +48,12 @@ export class EmployeesComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       address: ['', Validators.required],
       departmentId: [null, Validators.required],
+
     });
 
     }
 
   ngOnInit(): void {
-
     this.getAllEmployees();
     this.getAllDepartments();
   }
@@ -73,7 +73,7 @@ export class EmployeesComponent implements OnInit {
       name: employee.name,
       email: employee.email,
       address: employee.address,
-      department: employee.department?.name
+      departmentId: employee.departmentId,
     });
     this.editedEmployee = employee;
   }
@@ -104,7 +104,7 @@ export class EmployeesComponent implements OnInit {
       address: this.addEmployeeForm.get('address')?.value,
       departmentId: this.addEmployeeForm.get('departmentId')?.value,
       department: {
-        // id: this.addEmployeeForm.get('department')?.value,
+        id: this.addEmployeeForm.get('department')?.value,
         name: this .addEmployeeForm.get('name')?.value,
       },
     };
@@ -117,7 +117,7 @@ export class EmployeesComponent implements OnInit {
         },
         (error) => {
           console.error('Error adding employee:', error);
-          console.error('Full error response:', error.error); // Log the full error response
+          console.error('Full error response:', error.error);
         }
       );
     }
@@ -130,13 +130,21 @@ export class EmployeesComponent implements OnInit {
 
 
   updateEmployee(): void {
+    if (this.editEmployeeForm.valid) {
       const updatedEmployee = this.editEmployeeForm.value;
       const employeeId = this.editedEmployee.id;
-      this.employeeService.updateEmployee(employeeId, updatedEmployee).subscribe();
-        this.getAllEmployees();
-        this.isEditModalVisible = false;
-         // window.location.reload();
-    console.log(updatedEmployee);
+      updatedEmployee.departmentId = +this.editEmployeeForm.get('departmentId')?.value;
+
+      this.employeeService.updateEmployee(employeeId, updatedEmployee).subscribe(
+        (response) => {
+          console.log('Employee updated successfully:', response);
+          this.getAllEmployees();
+        }, (error) => {
+          console.error('Error updating employee:', error);
+        }
+      );
+      this.isEditModalVisible = false;
+    }
   }
 
   deleteEmployee():void {
@@ -165,12 +173,6 @@ export class EmployeesComponent implements OnInit {
     );
   }
 
-
-  // getAllDepartments(): void {
-  //   this.departmentService.getAllDepartments().subscribe((departments) => {
-  //     this.departments = departments;
-  //   });
-  // }
   getAllDepartments(): void {
     console.log('Calling getAllDepartments');
     this.departmentService.getAllDepartments().subscribe(

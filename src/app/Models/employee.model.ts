@@ -19,6 +19,7 @@ export class DepartmentModel{
   id?:number;
   name:string;
   constructor() {
-    this.name='';
+   this.name='';
   }
 }
+

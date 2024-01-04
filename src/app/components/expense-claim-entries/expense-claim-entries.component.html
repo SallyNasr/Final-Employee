@@ -1,0 +1,43 @@
+  <div class="heading">
+    <h2>Expense Claim Entries </h2>
+    <a (click)="goBack()" class="go-back-link">Go back to Expenses Claim</a>
+  </div>
+  <p>Employee Id: {{expenseClaimId}}</p>
+
+  <!--  <div *ngFor="let entry of expenseDetails">-->
+<!--    <ul>-->
+<!--      <li>The details for employee Id : {{ entry.employeeId }} are</li>-->
+<!--      <li> Description: {{entry.description}}</li>-->
+<!--      <li> Date: {{ entry.date }}</li>-->
+<!--      <li> Entry:-->
+<!--        <ul *ngFor="let entryDetail of entry.entryDTOs">-->
+<!--          <li>Date: {{ entryDetail.date }}</li>-->
+<!--          <li>Expense Type: {{ entryDetail.expenseType }}</li>-->
+<!--          <li>Description: {{ entryDetail.description }}</li>-->
+<!--          <li>Total: {{ entryDetail.total }}</li>-->
+<!--        </ul>-->
+<!--      </li>-->
+<!--    </ul>-->
+<!--  </div>-->
+
+  <div *ngFor="let data of DetailsPerEmp">
+    <ul>
+      <li>Expense Type: {{data.expenseType}}</li>
+      <li>Total Amount: {{data.totalAmount}}</li>
+    </ul>
+  </div>
+
+
+<!--  <div *ngFor="let entries of expenseClaimEntries">-->
+<!--    <ul>-->
+<!--      <li>Expense Claim Entries Id: {{entries.id}}</li>-->
+<!--      <li>Expense Claim Id: {{entries.expenseClaim}}</li>-->
+<!--      <li>Description: {{entries.description}}</li>-->
+<!--      <li>Expense Type Id: {{entries.expenseType}}</li>-->
+<!--      <li>Date: {{entries.total}}</li>-->
+<!--      <li>Date: {{entries.date}}</li>-->
+
+<!--    </ul>-->
+<!--  </div>-->
+
+

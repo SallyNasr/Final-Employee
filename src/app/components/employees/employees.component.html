@@ -46,17 +46,14 @@
 
 <!--ADD EMPLOYEE MODEL-->
 
-<div *ngIf="isModalVisible"   >
+<div *ngIf="isModalVisible">
 <div  class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-
       <div class="modal-header" style="display: flex">
         <h1 class="modal-title fs-5" id="staticBackdropLabel">-&#45;&#45;Add New Employee:-&#45;&#45;</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()">x</button>
-
       </div>
-
       <div class="modal-body" >
         <form [formGroup]="addEmployeeForm">
           <div class="mb-3">
@@ -68,19 +65,20 @@
             <label for="email" class="form-label">Email:</label>
             <input type="email" class="form-control" id="email" placeholder="...@example.com" formControlName="email">
           </div>
-                    <div class="mb-3">
-                      <label for="address" class="form-label">Address:</label>
-                      <input type="text" class="form-control" id="address" placeholder="address" formControlName="address">
-                    </div>
+
           <div class="mb-3">
-            <label for="addepartment">Department:</label>
-            <select formControlName="department" name="department" id="addepartment" (change)="onDepartmentChange($event)">
+            <label for="address" class="form-label">Address:</label>
+            <input type="text" class="form-control" id="address" placeholder="address" formControlName="address">
+          </div>
+
+          <div class="mb-3">
+            <label for="addDepartment">Department:</label><br>
+            <select name="department" id="addDepartment" (change)="onDepartmentChange($event)" formControlName="departmentId">
               <option *ngFor="let department of departments" [value]="department.id" >
                 {{ department.name }}
               </option>
             </select>
-      </div>
-
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -144,9 +142,9 @@
               <input type="text" formControlName="address" class="form-control" id="editAddress" placeholder="address" >
             </div>
             <div class="mb-3">
-              <label for="department">Department:</label>
-              <select formControlName="department" name="department" id="department" >
-                <option *ngFor="let department of departments" [value]="department.id" placeholder="Department">
+              <label for="departmentId">Department</label><br>
+              <select formControlName="departmentId" name="departmentId" id="departmentId" >
+                <option *ngFor="let department of departments" [value]="department.id">
                   {{ department.name }}
                 </option>
               </select>
